@@ -39,10 +39,11 @@ class TestDepositHandler extends DepositHandler {
 
 }
 
-test("Transaction is setup correctly", () => {
+test("Transaction is setup correctly", async () => {
   let handler = new TestDepositHandler()
-  handler.handle("111.111.111-11", 500)
-  expect(handler._transaction).toMatchObject({
+  let result = await handler.handle("111.111.111-11", 500)
+  expect(result.ok).toBeTruthy()
+  expect(result.data).toMatchObject({
     amount: 502,
     source: handler._source,
     destination: handler._destination
@@ -83,6 +84,8 @@ test("Transactino rolls back when something goes wrong", async () => {
   let handler = new TestDepositHandler()
   handler._transaction.commit = async () => { throw new Error() }
   jest.spyOn(handler._transaction, "rollback")
-  await handler.handle("111.111.111-11", 500)
+  let result = await handler.handle("111.111.111-11", 500)
   expect(handler._transaction.rollback).toHaveBeenCalled()
+  expect(result.ok).toBeFalsy()
+  expect(result.data).toBeInstanceOf(Error)
 })

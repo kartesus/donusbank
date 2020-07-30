@@ -5,6 +5,7 @@ import { VerifiableAccount } from "../accounting/traits/verifiable_account";
 import { Transaction } from "../accounting/entities/transaction";
 import { PersistentTransaction } from "../accounting/traits/persistent_transaction";
 import { PersistentLedger } from "../accounting/traits/persistent_ledger";
+import { Result, wrapped } from "../lib/result";
 
 interface BonusSourceLedger extends SourceAccount, BonusCalculator, PersistentLedger { }
 interface VerifiableDestinationLedger extends DestinationAccount, VerifiableAccount, PersistentLedger { }
@@ -15,7 +16,7 @@ export abstract class DepositHandler {
   abstract source(): BonusSourceLedger
   abstract destination(fiscalNumber: string): VerifiableDestinationLedger
 
-  async handle(fiscalNumber: string, amount: number): Promise<void> {
+  async handle(fiscalNumber: string, amount: number): Promise<Result<DepositTransaction>> {
     let source = this.source()
     let destination = this.destination(fiscalNumber)
     let bonus = source.calculateBonusFor(amount)
@@ -35,8 +36,10 @@ export abstract class DepositHandler {
       destination.deposit(bonus)
 
       await transaction.commit()
+      return wrapped(transaction)
     } catch (err) {
       await transaction.rollback()
+      return wrapped(err)
     }
   }
 }
