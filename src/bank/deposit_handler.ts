@@ -7,14 +7,14 @@ import { PersistentTransaction } from "../accounting/traits/persistent_transacti
 import { PersistentLedger } from "../accounting/traits/persistent_ledger";
 import { Result, wrapped } from "../lib/result";
 
-interface BonusSourceLedger extends SourceAccount, BonusCalculator, PersistentLedger { }
-interface VerifiableDestinationLedger extends DestinationAccount, VerifiableAccount, PersistentLedger { }
+interface Source extends SourceAccount, BonusCalculator, PersistentLedger { }
+interface Destination extends DestinationAccount, VerifiableAccount, PersistentLedger { }
 interface DepositTransaction extends Transaction, PersistentTransaction { }
 
 export abstract class DepositHandler {
   abstract transaction(): DepositTransaction
-  abstract source(): BonusSourceLedger
-  abstract destination(fiscalNumber: string): VerifiableDestinationLedger
+  abstract source(): Source
+  abstract destination(fiscalNumber: string): Destination
 
   async handle(fiscalNumber: string, amount: number): Promise<Result<DepositTransaction>> {
     let source = this.source()
