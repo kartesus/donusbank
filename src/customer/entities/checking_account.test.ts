@@ -1,3 +1,4 @@
+import CPF from "cpf";
 import { CheckingAccount } from "./checking_account";
 
 test("Generates UUID when ID is null", () => {
@@ -15,8 +16,8 @@ test("Name must have at least 3 chars", () => {
 })
 
 test("Fiscal number must be valid", () => {
-  let a1 = new CheckingAccount(null, "", "111.111.111-11")
-  let a2 = new CheckingAccount(null, "", "111.222.333-44")
+  let a1 = new CheckingAccount(null, "", CPF.generate())
+  let a2 = new CheckingAccount(null, "", CPF.generate(true, true))
   let a3 = new CheckingAccount(null, "", "")
   expect(() => { a1.mustHaveValidFiscalNumber() }).not.toThrow()
   expect(() => { a2.mustHaveValidFiscalNumber() }).toThrow()

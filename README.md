@@ -1,5 +1,4 @@
 # Donus Challenge
-
 > Seu objetivo é criar uma API com algumas funções essenciais relacionadas ao gerenciamento de contas bancárias. 
 > Para abrir uma conta é necessário apenas o nome completo e CPF da pessoa, mas só é permitido uma conta por pessoa.
 >
@@ -10,17 +9,11 @@
 >    - É importante ter o histórico de todas as movimentações dos clientes.
 
 # Testes
-
-Para rodar testes
 ```
 $ npm run test
 ```
 
-Para ver cobertura
+Ou 
 ```
 $ npm run converage
 ```
-
-Cobertura de teste no validador de CPF é baixa porque eu não implementei o algoritmo e estou
-só cobrindo o caso básico garantindo que CPFs sabidamente válidos vão passar e sabidamente inválidos
-vão dar erro.

@@ -1,3 +1,5 @@
+import CPF from "cpf";
+
 import { OpenAccountHandler } from "./open_account_handler";
 import { CheckingAccount } from "../customer/entities/checking_account"
 import { AccountCreator } from "../customer/traits/account_creator";
@@ -16,7 +18,7 @@ class TestOpenAccountHandler extends OpenAccountHandler {
 
 test("Must validate name", async () => {
   let handler = new TestOpenAccountHandler()
-  let result = await handler.handle("", "111.111.111-11")
+  let result = await handler.handle("", CPF.generate())
   expect(result.ok).toBeFalsy()
 })
 
@@ -28,7 +30,7 @@ test("Must validate fiscal number", async () => {
 
 test("Must commit valid accounts", async () => {
   let handler = new TestOpenAccountHandler()
-  let result = await handler.handle("Joe", "111.111.111.-11")
+  let result = await handler.handle("Joe", CPF.generate())
   expect(result.ok).toBeTruthy()
   if (result.ok === false) throw new Error() // satisfy the typechecker
   expect(result.data.createAccount).toHaveBeenCalled()

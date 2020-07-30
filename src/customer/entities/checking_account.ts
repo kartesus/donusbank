@@ -1,4 +1,5 @@
 import { v4 as uuid } from "uuid";
+import CPF from "cpf";
 
 export class CheckingAccount {
   public ID = ""
@@ -16,18 +17,6 @@ export class CheckingAccount {
   }
 
   mustHaveValidFiscalNumber() {
-    this.fiscalNumber = this.fiscalNumber.replace(/[^\d]+/g, '')
-    if (this.fiscalNumber === '') throw new Error("Invalid this.fiscal number")
-    if (this.fiscalNumber.length !== 11) throw new Error("Invalid this.fiscal number")
-    let v1 = 0
-    for (let i = 0; i < 9; i++) v1 += parseInt(this.fiscalNumber.charAt(i)) * (10 - i)
-    v1 = 11 - (v1 % 11)
-    if (v1 == 10 || v1 == 11) v1 = 0
-    if (v1 != parseInt(this.fiscalNumber.charAt(9))) throw new Error("Invalid this.fiscal number")
-    let v2 = 0
-    for (let i = 0; i < 10; i++) v2 += parseInt(this.fiscalNumber.charAt(i)) * (11 - i)
-    v2 = 11 - (v2 % 11)
-    if (v2 == 10 || v2 == 11) v2 = 0
-    if (v2 != parseInt(this.fiscalNumber.charAt(10))) throw new Error("Invalid this.fiscal number")
+    if (!CPF.isValid(this.fiscalNumber)) throw new Error("Invalid fiscal number")
   }
 }
