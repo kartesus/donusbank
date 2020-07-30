@@ -1,0 +1,1 @@
+export type Entry = { amount: number, version: number }
