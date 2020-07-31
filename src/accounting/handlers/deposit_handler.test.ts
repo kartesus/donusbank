@@ -1,9 +1,9 @@
 import { DepositHandler } from "./deposit_handler";
-import { AccountLedger } from "../accounting/entities/account_ledger";
-import { TreasuryAccount } from "../accounting/entities/tresury_account";
-import { Transaction } from "../accounting/entities/transaction";
-import { PersistentLedger } from "../accounting/traits/persistent_ledger";
-import { PersistentTransaction } from "../accounting/traits/persistent_transaction";
+import { AccountLedger } from "../entities/account_ledger";
+import { TreasuryAccount } from "../entities/tresury_account";
+import { Transaction } from "../entities/transaction";
+import { PersistentLedger } from "../traits/persistent_ledger";
+import { PersistentTransaction } from "../traits/persistent_transaction";
 
 class TestSourceAccount extends TreasuryAccount implements PersistentLedger {
   async commit(): Promise<void> { }

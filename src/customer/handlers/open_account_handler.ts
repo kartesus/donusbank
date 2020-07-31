@@ -1,6 +1,6 @@
-import { Result, wrapped } from "../lib/result";
-import { CheckingAccount } from "../customer/entities/checking_account";
-import { AccountCreator } from "../customer/traits/account_creator";
+import { Result, wrapped } from "../../lib/result";
+import { CheckingAccount } from "../entities/checking_account";
+import { AccountCreator } from "../traits/account_creator";
 
 interface CommitableCheckingAccount extends CheckingAccount, AccountCreator { }
 

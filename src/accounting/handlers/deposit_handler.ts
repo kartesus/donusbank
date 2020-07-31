@@ -1,11 +1,11 @@
-import { SourceAccount } from "../accounting/traits/source_account";
-import { DestinationAccount } from "../accounting/traits/destination_account";
-import { BonusCalculator } from "../accounting/traits/bonus_calculator";
-import { VerifiableAccount } from "../accounting/traits/verifiable_account";
-import { Transaction } from "../accounting/entities/transaction";
-import { PersistentTransaction } from "../accounting/traits/persistent_transaction";
-import { PersistentLedger } from "../accounting/traits/persistent_ledger";
-import { Result, wrapped } from "../lib/result";
+import { SourceAccount } from "../traits/source_account";
+import { DestinationAccount } from "../traits/destination_account";
+import { BonusCalculator } from "../traits/bonus_calculator";
+import { VerifiableAccount } from "../traits/verifiable_account";
+import { Transaction } from "../entities/transaction";
+import { PersistentTransaction } from "../traits/persistent_transaction";
+import { PersistentLedger } from "../traits/persistent_ledger";
+import { Result, wrapped } from "../../lib/result";
 
 interface Source extends SourceAccount, BonusCalculator, PersistentLedger { }
 interface Destination extends DestinationAccount, VerifiableAccount, PersistentLedger { }
