@@ -13,6 +13,8 @@
 docker run -p "5432:5432" --name postgresql -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres
 docker exec postgresql createdb -U postgres donusbank
 docker exec postgresql createdb -U postgres donusbank_test
+
+npm install
 POSTGRES_URL='postgres://postgres@localhost/donusbank' npm run migration
 POSTGRES_URL='postgres://postgres@localhost/donusbank_test' npm run migration
 ```
@@ -25,4 +27,9 @@ npm run test
 or 
 ```bash
 npm run converage
+```
+
+## Server
+```bash
+POSTGRES_URL='postgres://postgres@localhost/donusbank' npm run server:dev
 ```

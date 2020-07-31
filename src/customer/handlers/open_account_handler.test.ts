@@ -9,7 +9,7 @@ class TestCommitablePersonalAccount extends PersonalAccount implements AccountCr
 }
 
 class TestOpenAccountHandler extends OpenAccountHandler {
-  commitableAccount(name: string, fiscalNumber: string) {
+  creatableAccount(name: string, fiscalNumber: string) {
     let acc = new TestCommitablePersonalAccount(name, fiscalNumber)
     jest.spyOn(acc, "createAccount")
     return acc

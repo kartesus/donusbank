@@ -9,7 +9,8 @@
   "scripts": {
     "test": "jest --runInBand --detectOpenHandles",
     "coverage": "jest --coverage --runInBand --detectOpenHandles",
-    "migration": "ts-node src/platform/postgres/migration.ts"
+    "migration": "ts-node src/platform/postgres/migration.ts",
+    "server:dev": "ts-node src/server.ts"
   },
   "keywords": [],
   "author": "",

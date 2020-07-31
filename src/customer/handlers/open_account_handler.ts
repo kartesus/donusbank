@@ -5,10 +5,10 @@ import { AccountCreator } from "../traits/account_creator";
 interface CreatableCheckingAccount extends PersonalAccount, AccountCreator { }
 
 export abstract class OpenAccountHandler {
-  abstract commitableAccount(name: string, fiscalNumber: string): CreatableCheckingAccount
+  abstract creatableAccount(name: string, fiscalNumber: string): CreatableCheckingAccount
 
   async handle(name: string, fiscalNumber: string): Promise<Result<CreatableCheckingAccount>> {
-    let account = this.commitableAccount(name, fiscalNumber)
+    let account = this.creatableAccount(name, fiscalNumber)
     try {
       account.mustHaveValidName()
       account.mustHaveValidFiscalNumber()
