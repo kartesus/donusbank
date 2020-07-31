@@ -1,13 +1,13 @@
 import { Result, wrapped } from "../../lib/result";
-import { CheckingAccount } from "../entities/checking_account";
+import { PersonalAccount } from "../entities/personal_account";
 import { AccountCreator } from "../traits/account_creator";
 
-interface CommitableCheckingAccount extends CheckingAccount, AccountCreator { }
+interface CreatableCheckingAccount extends PersonalAccount, AccountCreator { }
 
 export abstract class OpenAccountHandler {
-  abstract commitableAccount(name: string, fiscalNumber: string): CommitableCheckingAccount
+  abstract commitableAccount(name: string, fiscalNumber: string): CreatableCheckingAccount
 
-  async handle(name: string, fiscalNumber: string): Promise<Result<CommitableCheckingAccount>> {
+  async handle(name: string, fiscalNumber: string): Promise<Result<CreatableCheckingAccount>> {
     let account = this.commitableAccount(name, fiscalNumber)
     try {
       account.mustHaveValidName()

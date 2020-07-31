@@ -1,16 +1,16 @@
 import CPF from "cpf";
 
 import { OpenAccountHandler } from "./open_account_handler";
-import { CheckingAccount } from "../entities/checking_account"
+import { PersonalAccount } from "../entities/personal_account"
 import { AccountCreator } from "../traits/account_creator";
 
-class TestCommitableCheckingAccount extends CheckingAccount implements AccountCreator {
+class TestCommitablePersonalAccount extends PersonalAccount implements AccountCreator {
   async createAccount() { }
 }
 
 class TestOpenAccountHandler extends OpenAccountHandler {
   commitableAccount(name: string, fiscalNumber: string) {
-    let acc = new TestCommitableCheckingAccount(null, name, fiscalNumber)
+    let acc = new TestCommitablePersonalAccount(name, fiscalNumber)
     jest.spyOn(acc, "createAccount")
     return acc
   }

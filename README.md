@@ -8,14 +8,21 @@
 >    - As transferências entre contas são gratuitas e ilimitadas;
 >    - É importante ter o histórico de todas as movimentações dos clientes.
 
-$ Setup
-
-# Tests
+## Setup
+```bash
+docker run -p "5432:5432" --name postgresql -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres
+docker exec postgresql createdb -U postgres donusbank
+docker exec postgresql createdb -U postgres donusbank_test
+POSTGRES_URL='postgres://postgres@localhost/donusbank' npm run migration
+POSTGRES_URL='postgres://postgres@localhost/donusbank_test' npm run migration
 ```
-$ npm run test
+
+## Tests
+```bash
+npm run test
 ```
 
 or 
-```
-$ npm run converage
+```bash
+npm run converage
 ```

@@ -7,19 +7,22 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "jest",
-    "coverage": "jest --coverage"
+    "test": "jest --runInBand --detectOpenHandles",
+    "coverage": "jest --coverage --runInBand --detectOpenHandles",
+    "migration": "ts-node src/platform/postgres/migration.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cpf": "^2.0.1",
+    "pg": "^8.3.0",
     "uuid": "^8.3.0"
   },
   "devDependencies": {
     "@types/jest": "^26.0.7",
     "@types/uuid": "^8.0.0",
+    "@types/pg": "^7.14.4",
     "jest": "^26.1.0",
     "ts-jest": "^26.1.4",
     "typescript": "^3.9.7"

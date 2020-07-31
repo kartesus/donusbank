@@ -1,13 +1,11 @@
-import { v4 as uuid } from "uuid";
 import CPF from "cpf";
 
-export class CheckingAccount {
+export class PersonalAccount {
   public ID = ""
   public name = ""
   public fiscalNumber = ""
 
-  constructor(id: string | null, name: string, fiscalNumber: string) {
-    this.ID = id === null ? uuid() : id
+  constructor(name: string, fiscalNumber: string) {
     this.name = name
     this.fiscalNumber = fiscalNumber
   }
