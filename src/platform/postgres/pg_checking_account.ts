@@ -2,13 +2,13 @@ import { mixin } from "../../lib/mixin";
 import { v4 as uuid } from "uuid";
 
 import { Connection } from "./connection";
-import { PersonalAccount } from "../../customer/entities/personal_account";
+import { CheckingAccount } from "../../customer/entities/checking_account";
 import { AccountCreator } from "../../customer/traits/account_creator";
 import { VerifiableAccount } from "../../accounting/traits/verifiable_account";
 import { AccountLedger } from "../../accounting/entities/account_ledger";
 import { TransactionalConnection } from "./connection";
 
-export interface PgCheckingAccount extends PersonalAccount, AccountLedger { }
+export interface PgCheckingAccount extends CheckingAccount, AccountLedger { }
 
 export class PgCheckingAccount implements VerifiableAccount, AccountCreator {
   private conn: Connection | TransactionalConnection
@@ -53,4 +53,4 @@ export class PgCheckingAccount implements VerifiableAccount, AccountCreator {
   }
 }
 
-mixin(PgCheckingAccount, [PersonalAccount, AccountLedger])
+mixin(PgCheckingAccount, [CheckingAccount, AccountLedger])

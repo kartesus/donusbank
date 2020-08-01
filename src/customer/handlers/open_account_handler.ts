@@ -1,8 +1,8 @@
 import { Result, wrapped } from "../../lib/result";
-import { PersonalAccount } from "../entities/personal_account";
+import { CheckingAccount } from "../entities/checking_account";
 import { AccountCreator } from "../traits/account_creator";
 
-interface CreatableCheckingAccount extends PersonalAccount, AccountCreator { }
+interface CreatableCheckingAccount extends CheckingAccount, AccountCreator { }
 
 export abstract class OpenAccountHandler {
   abstract creatableAccount(name: string, fiscalNumber: string): CreatableCheckingAccount

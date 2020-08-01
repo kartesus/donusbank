@@ -1,6 +1,6 @@
 import CPF from "cpf";
 
-export class PersonalAccount {
+export class CheckingAccount {
   public ID = ""
   public name = ""
   public fiscalNumber = ""

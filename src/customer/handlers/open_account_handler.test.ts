@@ -1,10 +1,10 @@
 import CPF from "cpf";
 
 import { OpenAccountHandler } from "./open_account_handler";
-import { PersonalAccount } from "../entities/personal_account"
+import { CheckingAccount } from "../entities/checking_account"
 import { AccountCreator } from "../traits/account_creator";
 
-class TestCommitablePersonalAccount extends PersonalAccount implements AccountCreator {
+class TestCommitablePersonalAccount extends CheckingAccount implements AccountCreator {
   async createAccount() { }
 }
 
