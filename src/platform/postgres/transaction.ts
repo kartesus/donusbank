@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import { Connection } from "./connection";
 import { Transaction as AccountingTransaction } from "../../accounting/entities/transaction";
 import { PersistentTransaction } from "../../accounting/traits/persistent_transaction";
+import { CheckingAccount } from "./checking_account";
 
 export interface Transaction extends AccountingTransaction { }
 
@@ -21,7 +22,9 @@ export class Transaction extends AccountingTransaction implements PersistentTran
         if (this.source === null) throw new Error("No source account in transaction")
         if (this.destination === null) throw new Error("No destination account in transaction")
 
-        let sourceEntries = await this.source.authorizeWithdraw(this.ID)
+        let source = <CheckingAccount>this.source
+
+        let sourceEntries = await this.source.commit(this.ID)
         let destinationEntries = await this.destination.authorizeDeposit(this.ID)
 
         await conn.execute(

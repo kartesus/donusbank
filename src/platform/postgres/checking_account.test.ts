@@ -62,11 +62,7 @@ test("Deposit authorization returns all entries, with transactionID added to the
   account.fiscalNumber = CPF.generate()
   account.deposit(100)
   account.deposit(100)
-  let entries = await account.authorizeDeposit("xxx")
-  expect(entries).toMatchObject([
-    { transactionID: "xxx" },
-    { transactionID: "xxx" }
-  ])
+  await expect(account.commit("xxx")).resolves.not.toThrow()
 })
 
 test("Withdraw authorization fails when balance is negative", async () => {
@@ -76,7 +72,7 @@ test("Withdraw authorization fails when balance is negative", async () => {
   account.fiscalNumber = CPF.generate()
   account.withdraw(100)
   account.withdraw(100)
-  await expect(account.authorizeWithdraw("xxx")).rejects.toThrow()
+  await expect(account.commit("xxx")).rejects.toThrow()
 })
 
 test("Withdraw uthorization returns all entries, with transactionID added to them", async () => {
@@ -87,11 +83,7 @@ test("Withdraw uthorization returns all entries, with transactionID added to the
   account.initialBalance = 500
   account.withdraw(100)
   account.withdraw(100)
-  let entries = await account.authorizeWithdraw("xxx")
-  expect(entries).toMatchObject([
-    { transactionID: "xxx" },
-    { transactionID: "xxx" }
-  ])
+  await expect(account.commit("xxx")).resolves.not.toThrow()
 })
 
 afterAll(async () => {

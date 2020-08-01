@@ -35,7 +35,7 @@ export class Connection {
     }
     let execute = async (stmt: string, values: any[]) => {
       let res = await client.query(stmt, values)
-      if (Array.isArray(res)) return 0
+      if (Array.isArray(res)) return res.length
       else return Number(res.rowCount)
     }
     try {

@@ -41,3 +41,26 @@ test("Should run commit transactions", async () => {
   let r = await conn.query("SELECT * FROM testing", [])
   expect(r).toMatchObject([{ id: 1 }, { id: 2 }])
 })
+
+test("Transactions don't hide errors", async () => {
+  let conn = new Connection(POSTGRES_URL)
+  await expect(conn.run(async (client) => {
+    await client.execute("INVALID SQL", [])
+  })).rejects.toBeInstanceOf(Error)
+})
+
+test("Transactions can execute queries", async () => {
+  let conn = new Connection(POSTGRES_URL)
+  await conn.run(async (client) => {
+    let res = await client.query("SELECT * FROM testing", [])
+    expect(res.length).toBe(2)
+  })
+})
+
+test("Transactions execute multiple statements", async () => {
+  let conn = new Connection(POSTGRES_URL)
+  await conn.run(async (client) => {
+    let rows = await client.execute("INSERT INTO testing VALUES(3); INSERT INTO testing VALUES(4)", [])
+    expect(rows).toBe(2)
+  })
+})

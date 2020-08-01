@@ -41,13 +41,8 @@ export class CheckingAccount implements VerifiableAccount, AccountCreator, Persi
     this.initialBalance = data.balance || 0
   }
 
-  async authorizeDeposit(transactionID: string) {
-    return this.entries.map(e => Object.assign(e, { transactionID }))
-  }
-
-  async authorizeWithdraw(transactionID: string) {
+  async commit(transactionID: string) {
     if (this.balance < 0) throw new Error("Account balance cannot be below 0")
-    return this.entries.map(e => Object.assign(e, { transactionID }))
   }
 
 }

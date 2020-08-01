@@ -14,11 +14,5 @@ export class TreasuryAccount extends TreasuryAcc implements PersistentLedger {
     this.conn = conn
   }
 
-  async authorizeDeposit(transactionID: string) {
-    return this.entries.map(e => Object.assign(e, { transactionID }))
-  }
-
-  async authorizeWithdraw(transactionID: string) {
-    return this.entries.map(e => Object.assign(e, { transactionID }))
-  }
+  async commit(transactionID: string) { }
 }

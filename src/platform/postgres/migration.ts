@@ -28,7 +28,7 @@ function main() {
       amount integer, 
       version integer,
       primary key(id),
-      unique(id, version),
+      unique(accountID, version),
       constraint fk_transaction
         foreign key(transactionID) 
           references transactions(id));`
