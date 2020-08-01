@@ -34,7 +34,6 @@ export abstract class TransferHandler {
       await transaction.commit()
       return wrapped(transaction)
     } catch (err) {
-      transaction.rollback()
       return wrapped(err)
     }
   }

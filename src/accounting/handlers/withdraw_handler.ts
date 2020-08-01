@@ -38,7 +38,6 @@ export abstract class WithdrawHandler {
       await transaction.commit()
       return wrapped(transaction)
     } catch (err) {
-      await transaction.rollback()
       return wrapped(err)
     }
   }

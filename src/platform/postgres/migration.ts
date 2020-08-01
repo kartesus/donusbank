@@ -3,9 +3,9 @@ import { Client } from "pg";
 function main() {
   let client = new Client({ connectionString: process.env.POSTGRES_URL })
   let query = `
-    DROP TABLE IF EXISTS accounts;
-    DROP TABLE IF EXISTS entries;
-    DROP TABLE IF EXISTS transactions;
+    DROP TABLE IF EXISTS accounts CASCADE;
+    DROP TABLE IF EXISTS entries CASCADE;
+    DROP TABLE IF EXISTS transactions CASCADE;
     
     CREATE TABLE accounts(
       id uuid, 
@@ -31,10 +31,7 @@ function main() {
       unique(id, version),
       constraint fk_transaction
         foreign key(transactionID) 
-          references transactions(id),
-      constraint fk_account
-        foreign key(accountID)
-          references accounts(id));`
+          references transactions(id));`
 
   client.connect()
   client.query(query, (err, _res) => {

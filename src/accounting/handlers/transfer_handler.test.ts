@@ -1,19 +1,21 @@
 import { TransferHandler } from "./transfer_handler";
 import { AccountLedger } from "../entities/account_ledger";
-import { TreasuryAccount } from "../entities/tresury_account";
 import { Transaction } from "../entities/transaction";
 import { PersistentLedger } from "../traits/persistent_ledger";
 import { PersistentTransaction } from "../traits/persistent_transaction";
+import { Entry } from "../entities/entry";
 
 class TestSourceAccount extends AccountLedger implements PersistentLedger {
+  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
+  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
   async commit(): Promise<void> { }
-  async rollback(): Promise<void> { }
   async verify(): Promise<void> { }
 }
 
 class TestDestinationAccount extends AccountLedger implements PersistentLedger {
+  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
+  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
   async commit(): Promise<void> { }
-  async rollback(): Promise<void> { }
   async verify(): Promise<void> { }
 }
 
@@ -33,8 +35,8 @@ class TestTransferHandler extends TransferHandler {
 
   constructor() {
     super()
-    this._source = new TestSourceAccount("42")
-    this._destination = new TestDestinationAccount("12")
+    this._source = new TestSourceAccount()
+    this._destination = new TestDestinationAccount()
     this._transaction = new TestTransaction()
   }
 
@@ -84,7 +86,6 @@ test("Transactino rolls back when something goes wrong", async () => {
   handler._transaction.commit = async () => { throw new Error() }
   jest.spyOn(handler._transaction, "rollback")
   let result = await handler.handle("111.111.111-11", "222.222.222-22", 500)
-  expect(handler._transaction.rollback).toHaveBeenCalled()
   expect(result.ok).toBeFalsy()
   expect(result.data).toBeInstanceOf(Error)
 })

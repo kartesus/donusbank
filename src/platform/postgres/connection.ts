@@ -1,4 +1,11 @@
-import { Pool, PoolClient } from "pg";
+import { Pool } from "pg";
+
+interface TransactionalConnection {
+  commit(): Promise<void>
+  rollback(): Promise<void>
+  execute(stmt: string, values: any[]): Promise<number>
+  query(stmt: string, values: any[]): Promise<any[]>
+}
 
 export class Connection {
   private pool: Pool
@@ -8,30 +15,34 @@ export class Connection {
   }
 
   async query(stmt: string, values: Array<any>) {
-    let client = await this.pool.connect()
-    try {
-      let res = await client.query(stmt, values)
-      return res.rows
-    } finally {
-      client.release()
-    }
+    let res = await this.pool.query(stmt, values)
+    return res.rows
   }
 
   async execute(stmt: string, values: Array<any>) {
+    let res = await this.pool.query(stmt, values)
+    if (Array.isArray(res)) return 0
+    else return Number(res.rowCount)
+  }
+
+  async run(fn: (c: TransactionalConnection) => Promise<void>) {
     let client = await this.pool.connect()
-    try {
+    let commit = async () => { await client.query("COMMIT") }
+    let rollback = async () => { await client.query("ROLLBACK") }
+    let query = async (stmt: string, values: any[]) => {
+      let res = await client.query(stmt, values)
+      return res.rows
+    }
+    let execute = async (stmt: string, values: any[]) => {
       let res = await client.query(stmt, values)
       if (Array.isArray(res)) return 0
       else return Number(res.rowCount)
-    } finally {
-      client.release()
     }
-  }
-
-  async run(fn: (c: PoolClient) => Promise<void>) {
-    let client = await this.pool.connect()
     try {
-      await fn(client)
+      await client.query("BEGIN")
+      await fn({ commit, rollback, query, execute })
+    } catch (err) {
+      throw err
     } finally {
       client.release()
     }

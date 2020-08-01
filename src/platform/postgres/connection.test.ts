@@ -25,9 +25,8 @@ test("Should run queries", async () => {
 test("Should run rollback transactions", async () => {
   let conn = new Connection(POSTGRES_URL)
   await conn.run(async (client) => {
-    client.query("BEGIN")
-    client.query("INSERT INTO testing VALUES($1)", [2])
-    client.query("ROLLBACK")
+    await client.execute("INSERT INTO testing VALUES($1)", [2])
+    await client.rollback()
   })
   let r = await conn.query("SELECT * FROM testing", [])
   expect(r).toMatchObject([{ id: 1 }])
@@ -36,9 +35,8 @@ test("Should run rollback transactions", async () => {
 test("Should run commit transactions", async () => {
   let conn = new Connection(POSTGRES_URL)
   await conn.run(async (client) => {
-    client.query("BEGIN")
-    client.query("INSERT INTO testing VALUES($1)", [2])
-    client.query("COMMIT")
+    await client.execute("INSERT INTO testing VALUES($1)", [2])
+    await client.commit()
   })
   let r = await conn.query("SELECT * FROM testing", [])
   expect(r).toMatchObject([{ id: 1 }, { id: 2 }])

@@ -6,11 +6,11 @@ import { PersonalAccount } from "../../customer/entities/personal_account";
 import { AccountCreator } from "../../customer/traits/account_creator";
 import { VerifiableAccount } from "../../accounting/traits/verifiable_account";
 import { AccountLedger } from "../../accounting/entities/account_ledger";
+import { PersistentLedger } from "../../accounting/traits/persistent_ledger";
 
-export interface CheckingAccount
-  extends PersonalAccount, AccountLedger, AccountCreator, VerifiableAccount { }
+export interface CheckingAccount extends PersonalAccount, AccountLedger { }
 
-export class CheckingAccount {
+export class CheckingAccount implements VerifiableAccount, AccountCreator, PersistentLedger {
   private conn: Connection
 
   constructor(conn: Connection) {
@@ -40,6 +40,16 @@ export class CheckingAccount {
     this.version = data.version || 0
     this.initialBalance = data.balance || 0
   }
+
+  async authorizeDeposit(transactionID: string) {
+    return this.entries.map(e => Object.assign(e, { transactionID }))
+  }
+
+  async authorizeWithdraw(transactionID: string) {
+    if (this.balance < 0) throw new Error("Account balance cannot be below 0")
+    return this.entries.map(e => Object.assign(e, { transactionID }))
+  }
+
 }
 
 mixin(CheckingAccount, [PersonalAccount, AccountLedger])

@@ -55,7 +55,46 @@ test("Account verification succeeds and loads account data", async () => {
   }
 })
 
-// afterAll(async () => {
-//   let conn = new Connection(POSTGRES_URL)
-//   await conn.execute("TRUNCATE accounts", [])
-// })
+test("Deposit authorization returns all entries, with transactionID added to them", async () => {
+  let conn = new Connection(POSTGRES_URL)
+  let account = new CheckingAccount(conn)
+  account.name = "Alex Gravem"
+  account.fiscalNumber = CPF.generate()
+  account.deposit(100)
+  account.deposit(100)
+  let entries = await account.authorizeDeposit("xxx")
+  expect(entries).toMatchObject([
+    { transactionID: "xxx" },
+    { transactionID: "xxx" }
+  ])
+})
+
+test("Withdraw authorization fails when balance is negative", async () => {
+  let conn = new Connection(POSTGRES_URL)
+  let account = new CheckingAccount(conn)
+  account.name = "Alex Gravem"
+  account.fiscalNumber = CPF.generate()
+  account.withdraw(100)
+  account.withdraw(100)
+  await expect(account.authorizeWithdraw("xxx")).rejects.toThrow()
+})
+
+test("Withdraw uthorization returns all entries, with transactionID added to them", async () => {
+  let conn = new Connection(POSTGRES_URL)
+  let account = new CheckingAccount(conn)
+  account.name = "Alex Gravem"
+  account.fiscalNumber = CPF.generate()
+  account.initialBalance = 500
+  account.withdraw(100)
+  account.withdraw(100)
+  let entries = await account.authorizeWithdraw("xxx")
+  expect(entries).toMatchObject([
+    { transactionID: "xxx" },
+    { transactionID: "xxx" }
+  ])
+})
+
+afterAll(async () => {
+  let conn = new Connection(POSTGRES_URL)
+  await conn.execute("TRUNCATE entries,accounts", [])
+})
