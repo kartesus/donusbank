@@ -8,9 +8,9 @@ import { VerifiableAccount } from "../../accounting/traits/verifiable_account";
 import { AccountLedger } from "../../accounting/entities/account_ledger";
 import { TransactionalConnection } from "./connection";
 
-export interface CheckingAccount extends PersonalAccount, AccountLedger { }
+export interface PgCheckingAccount extends PersonalAccount, AccountLedger { }
 
-export class CheckingAccount implements VerifiableAccount, AccountCreator {
+export class PgCheckingAccount implements VerifiableAccount, AccountCreator {
   private conn: Connection | TransactionalConnection
 
   constructor(conn: Connection) {
@@ -53,4 +53,4 @@ export class CheckingAccount implements VerifiableAccount, AccountCreator {
   }
 }
 
-mixin(CheckingAccount, [PersonalAccount, AccountLedger])
+mixin(PgCheckingAccount, [PersonalAccount, AccountLedger])

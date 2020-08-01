@@ -3,14 +3,14 @@ import { v4 as uuid } from "uuid";
 import { Connection } from "./connection";
 import { Transaction as AccountingTransaction } from "../../accounting/entities/transaction";
 import { PersistentTransaction } from "../../accounting/traits/persistent_transaction";
-import { CheckingAccount } from "./checking_account";
+import { PgCheckingAccount } from "./pg_checking_account";
 
 export interface Transaction extends AccountingTransaction { }
 
 export class Transaction extends AccountingTransaction implements PersistentTransaction {
   private conn: Connection
-  public source: CheckingAccount | null = null
-  public destination: CheckingAccount | null = null
+  public source: PgCheckingAccount | null = null
+  public destination: PgCheckingAccount | null = null
 
   constructor(conn: Connection) {
     super()

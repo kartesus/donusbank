@@ -2,14 +2,14 @@ import CPF from "cpf"
 import { v4 as uuid } from "uuid";
 
 import { Connection } from "./connection"
-import { CheckingAccount } from "./checking_account";
+import { PgCheckingAccount } from "./pg_checking_account";
 
 const POSTGRES_URL = "postgres://postgres@localhost/donusbank_test"
 const UUID = /[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}/
 
 test("Creates account", async () => {
   let conn = new Connection(POSTGRES_URL)
-  let account = new CheckingAccount(conn)
+  let account = new PgCheckingAccount(conn)
   account.name = "Alex Gravem"
   account.fiscalNumber = CPF.generate()
   await account.createAccount()
@@ -27,7 +27,7 @@ test("Creates account", async () => {
 
 test("Account verification fails when account doesn't exist", async () => {
   let conn = new Connection(POSTGRES_URL)
-  let account = new CheckingAccount(conn)
+  let account = new PgCheckingAccount(conn)
   account.name = "Alex Gravem"
   account.fiscalNumber = CPF.generate()
   try {
@@ -39,7 +39,7 @@ test("Account verification fails when account doesn't exist", async () => {
 
 test("Account verification succeeds and loads account data", async () => {
   let conn = new Connection(POSTGRES_URL)
-  let account = new CheckingAccount(conn)
+  let account = new PgCheckingAccount(conn)
   account.name = "Alex Gravem"
   account.fiscalNumber = CPF.generate()
   try {
@@ -58,7 +58,7 @@ test("Account verification succeeds and loads account data", async () => {
 
 test("Commit fails when balance is negative", async () => {
   let conn = new Connection(POSTGRES_URL)
-  let account = new CheckingAccount(conn)
+  let account = new PgCheckingAccount(conn)
   account.name = "Alex Gravem"
   account.fiscalNumber = CPF.generate()
   account.withdraw(100)
@@ -73,7 +73,7 @@ test("Commit fails when balance is negative", async () => {
 
 test("Commit succeds when balance is positive", async () => {
   let conn = new Connection(POSTGRES_URL)
-  let account = new CheckingAccount(conn)
+  let account = new PgCheckingAccount(conn)
   account.name = "Alex Gravem"
   account.fiscalNumber = CPF.generate()
   account.deposit(100)

@@ -2,7 +2,7 @@ import CPF from "cpf";
 
 import { OpenAccountHandler } from "./customer/handlers/open_account_handler";
 import { Connection } from "./platform/postgres/connection"
-import { CheckingAccount } from "./platform/postgres/checking_account";
+import { PgCheckingAccount } from "./platform/postgres/pg_checking_account";
 import { TreasuryAccount } from "./platform/postgres/treasury_account";
 import { DepositHandler } from "./accounting/handlers/deposit_handler";
 import { Transaction } from "./platform/postgres/transaction";
@@ -18,7 +18,7 @@ class ProductionOpenAccountHandler extends OpenAccountHandler {
   }
 
   creatableAccount(name: string, fiscalNumber: string) {
-    let account = new CheckingAccount(this.conn)
+    let account = new PgCheckingAccount(this.conn)
     account.name = name
     account.fiscalNumber = fiscalNumber
     return account
@@ -34,7 +34,7 @@ class ProductionDepositHandler extends DepositHandler {
   }
 
   destination(fiscalNumber: string) {
-    let account = new CheckingAccount(this.conn)
+    let account = new PgCheckingAccount(this.conn)
     account.fiscalNumber = fiscalNumber
     return account
   }
@@ -60,7 +60,7 @@ class ProductionWithdrawHandler extends WithdrawHandler {
   }
 
   source(fiscalNumber: string) {
-    let account = new CheckingAccount(this.conn)
+    let account = new PgCheckingAccount(this.conn)
     account.fiscalNumber = fiscalNumber
     return account
   }
@@ -86,13 +86,13 @@ class ProductionTransferHandler extends TransferHandler {
   }
 
   source(fiscalNumber: string) {
-    let account = new CheckingAccount(this.conn)
+    let account = new PgCheckingAccount(this.conn)
     account.fiscalNumber = fiscalNumber
     return account
   }
 
   destination(fiscalNumber: string) {
-    let account = new CheckingAccount(this.conn)
+    let account = new PgCheckingAccount(this.conn)
     account.fiscalNumber = fiscalNumber
     return account
   }
