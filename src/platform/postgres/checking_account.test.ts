@@ -56,7 +56,7 @@ test("Account verification succeeds and loads account data", async () => {
   }
 })
 
-test("Withdraw authorization fails when balance is negative", async () => {
+test("Commit fails when balance is negative", async () => {
   let conn = new Connection(POSTGRES_URL)
   let account = new CheckingAccount(conn)
   account.name = "Alex Gravem"
@@ -64,8 +64,25 @@ test("Withdraw authorization fails when balance is negative", async () => {
   account.withdraw(100)
   account.withdraw(100)
   await expect(conn.run(async (conn) => {
-    await account.commitWithinTransaction(conn, uuid())
+    let id = uuid()
+    await conn.execute("INSERT INTO transactions (id) VALUES ($1)", [id])
+    await account.commitWithinTransaction(conn, id)
+    await conn.rollback()
   })).rejects.toThrow()
+})
+
+test("Commit succeds when balance is positive", async () => {
+  let conn = new Connection(POSTGRES_URL)
+  let account = new CheckingAccount(conn)
+  account.name = "Alex Gravem"
+  account.fiscalNumber = CPF.generate()
+  account.deposit(100)
+  await expect(conn.run(async (conn) => {
+    let id = uuid()
+    await conn.execute("INSERT INTO transactions (id) VALUES ($1)", [id])
+    await account.commitWithinTransaction(conn, id)
+    await conn.commit()
+  })).resolves.not.toThrow()
 })
 
 
