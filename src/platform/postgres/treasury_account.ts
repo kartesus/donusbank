@@ -1,11 +1,10 @@
-import { Connection } from "./connection";
+import { Connection, TransactionalConnection } from "./connection";
 import { TreasuryAccount as TreasuryAcc } from "../../accounting/entities/tresury_account";
 import { mixin } from "../../lib/mixin";
-import { PersistentLedger } from "../../accounting/traits/persistent_ledger";
 
 export interface TreasuryAccount extends TreasuryAcc { }
 
-export class TreasuryAccount extends TreasuryAcc implements PersistentLedger {
+export class TreasuryAccount extends TreasuryAcc {
   private conn: Connection
   public ID = "c89b484b-f1be-4e74-919b-56db532b6ad1"
 
@@ -14,5 +13,14 @@ export class TreasuryAccount extends TreasuryAcc implements PersistentLedger {
     this.conn = conn
   }
 
-  async commit(transactionID: string) { }
+  async commitWithinTransaction(tx: TransactionalConnection, transactionID: string) {
+    for (let entry of this.entries) {
+      await tx.execute(
+        `INSERT 
+         INTO entries (id, transactionID, accountID, amount) 
+         VALUES ($1, $2, $3, $4)`,
+        [entry.ID, transactionID, entry.accountID, entry.amount]
+      )
+    }
+  }
 }

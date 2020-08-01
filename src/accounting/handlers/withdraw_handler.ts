@@ -3,12 +3,11 @@ import { Transaction } from "../entities/transaction";
 import { PersistentTransaction } from "../traits/persistent_transaction";
 import { VerifiableAccount } from "../traits/verifiable_account";
 import { FeeCalculator } from "../traits/fee_calculator";
-import { PersistentLedger } from "../traits/persistent_ledger";
 import { DestinationAccount } from "../traits/destination_account";
 import { SourceAccount } from "../traits/source_account";
 
-interface Source extends SourceAccount, VerifiableAccount, PersistentLedger { }
-interface Destination extends DestinationAccount, FeeCalculator, PersistentLedger { }
+interface Source extends SourceAccount, VerifiableAccount { }
+interface Destination extends DestinationAccount, FeeCalculator { }
 interface WithdrawTransaction extends Transaction, PersistentTransaction { }
 
 export abstract class WithdrawHandler {

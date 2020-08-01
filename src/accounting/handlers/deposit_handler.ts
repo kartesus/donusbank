@@ -4,11 +4,10 @@ import { BonusCalculator } from "../traits/bonus_calculator";
 import { VerifiableAccount } from "../traits/verifiable_account";
 import { Transaction } from "../entities/transaction";
 import { PersistentTransaction } from "../traits/persistent_transaction";
-import { PersistentLedger } from "../traits/persistent_ledger";
 import { Result, wrapped } from "../../lib/result";
 
-interface Source extends SourceAccount, BonusCalculator, PersistentLedger { }
-interface Destination extends DestinationAccount, VerifiableAccount, PersistentLedger { }
+interface Source extends SourceAccount, BonusCalculator { }
+interface Destination extends DestinationAccount, VerifiableAccount { }
 interface DepositTransaction extends Transaction, PersistentTransaction { }
 
 export abstract class DepositHandler {

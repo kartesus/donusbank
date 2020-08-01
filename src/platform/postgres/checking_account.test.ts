@@ -1,4 +1,5 @@
 import CPF from "cpf"
+import { v4 as uuid } from "uuid";
 
 import { Connection } from "./connection"
 import { CheckingAccount } from "./checking_account";
@@ -55,16 +56,6 @@ test("Account verification succeeds and loads account data", async () => {
   }
 })
 
-test("Deposit authorization returns all entries, with transactionID added to them", async () => {
-  let conn = new Connection(POSTGRES_URL)
-  let account = new CheckingAccount(conn)
-  account.name = "Alex Gravem"
-  account.fiscalNumber = CPF.generate()
-  account.deposit(100)
-  account.deposit(100)
-  await expect(account.commit("xxx")).resolves.not.toThrow()
-})
-
 test("Withdraw authorization fails when balance is negative", async () => {
   let conn = new Connection(POSTGRES_URL)
   let account = new CheckingAccount(conn)
@@ -72,19 +63,11 @@ test("Withdraw authorization fails when balance is negative", async () => {
   account.fiscalNumber = CPF.generate()
   account.withdraw(100)
   account.withdraw(100)
-  await expect(account.commit("xxx")).rejects.toThrow()
+  await expect(conn.run(async (conn) => {
+    await account.commitWithinTransaction(conn, uuid())
+  })).rejects.toThrow()
 })
 
-test("Withdraw uthorization returns all entries, with transactionID added to them", async () => {
-  let conn = new Connection(POSTGRES_URL)
-  let account = new CheckingAccount(conn)
-  account.name = "Alex Gravem"
-  account.fiscalNumber = CPF.generate()
-  account.initialBalance = 500
-  account.withdraw(100)
-  account.withdraw(100)
-  await expect(account.commit("xxx")).resolves.not.toThrow()
-})
 
 afterAll(async () => {
   let conn = new Connection(POSTGRES_URL)

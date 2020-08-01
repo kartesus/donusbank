@@ -132,7 +132,6 @@ async function main() {
 
   result = await transferHandler.handle(cpf1, cpf2, 100)
   console.log(result)
-
 }
 
 main()

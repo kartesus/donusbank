@@ -2,12 +2,11 @@ import { Result, wrapped } from "../../lib/result";
 import { SourceAccount } from "../traits/source_account";
 import { VerifiableAccount } from "../traits/verifiable_account";
 import { PersistentTransaction } from "../traits/persistent_transaction";
-import { PersistentLedger } from "../traits/persistent_ledger";
 import { DestinationAccount } from "../traits/destination_account";
 import { Transaction } from "../entities/transaction";
 
-interface Source extends SourceAccount, VerifiableAccount, PersistentLedger { }
-interface Destination extends DestinationAccount, VerifiableAccount, PersistentLedger { }
+interface Source extends SourceAccount, VerifiableAccount { }
+interface Destination extends DestinationAccount, VerifiableAccount { }
 interface TransferTransaction extends Transaction, PersistentTransaction { }
 
 export abstract class TransferHandler {

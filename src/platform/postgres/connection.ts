@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 
-interface TransactionalConnection {
+export interface TransactionalConnection {
   commit(): Promise<void>
   rollback(): Promise<void>
   execute(stmt: string, values: any[]): Promise<number>

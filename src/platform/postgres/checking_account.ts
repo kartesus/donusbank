@@ -6,12 +6,12 @@ import { PersonalAccount } from "../../customer/entities/personal_account";
 import { AccountCreator } from "../../customer/traits/account_creator";
 import { VerifiableAccount } from "../../accounting/traits/verifiable_account";
 import { AccountLedger } from "../../accounting/entities/account_ledger";
-import { PersistentLedger } from "../../accounting/traits/persistent_ledger";
+import { TransactionalConnection } from "./connection";
 
 export interface CheckingAccount extends PersonalAccount, AccountLedger { }
 
-export class CheckingAccount implements VerifiableAccount, AccountCreator, PersistentLedger {
-  private conn: Connection
+export class CheckingAccount implements VerifiableAccount, AccountCreator {
+  private conn: Connection | TransactionalConnection
 
   constructor(conn: Connection) {
     this.conn = conn
@@ -41,10 +41,16 @@ export class CheckingAccount implements VerifiableAccount, AccountCreator, Persi
     this.initialBalance = data.balance || 0
   }
 
-  async commit(transactionID: string) {
-    if (this.balance < 0) throw new Error("Account balance cannot be below 0")
-  }
+  async commitWithinTransaction(tx: TransactionalConnection, transactionID: string) {
 
+    if (this.balance < 0) throw new Error("Account balance cannot be below 0")
+    for (let entry of this.entries) {
+      await tx.execute(
+        `INSERT INTO entries (id, transactionID, accountID, amount, version) VALUES ($1, $2, $3, $4, $5)`,
+        [entry.ID, transactionID, entry.accountID, entry.amount, entry.version]
+      )
+    }
+  }
 }
 
 mixin(CheckingAccount, [PersonalAccount, AccountLedger])

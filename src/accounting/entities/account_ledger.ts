@@ -18,10 +18,12 @@ export class AccountLedger implements SourceAccount, DestinationAccount {
   }
 
   get balance(): number {
-    return (this.initialBalance || 0) + this.entries.reduce((sum, e) => sum + e.amount, 0)
+    this.initialBalance = this.initialBalance || 0
+    return this.initialBalance + this.entries.reduce((sum, e) => sum + e.amount, 0)
   }
 
   withdraw(amount: number): void {
+    this.version = this.version || 0
     if (!this.entries) this.entries = []
     this.entries.push({
       ID: uuid(),
@@ -32,6 +34,7 @@ export class AccountLedger implements SourceAccount, DestinationAccount {
   }
 
   deposit(amount: number): void {
+    this.version = this.version || 0
     if (!this.entries) this.entries = []
     this.entries.push({
       ID: uuid(),
