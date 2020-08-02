@@ -5,9 +5,9 @@ import { Transaction as AccountingTransaction } from "../../accounting/entities/
 import { PersistentTransaction } from "../../accounting/traits/persistent_transaction";
 import { PgCheckingAccount } from "./pg_checking_account";
 
-export interface Transaction extends AccountingTransaction { }
+export interface PgTransaction extends AccountingTransaction { }
 
-export class Transaction extends AccountingTransaction implements PersistentTransaction {
+export class PgTransaction extends AccountingTransaction implements PersistentTransaction {
   private conn: Connection
   public source: PgCheckingAccount | null = null
   public destination: PgCheckingAccount | null = null

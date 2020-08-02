@@ -1,10 +1,10 @@
 import { Connection, TransactionalConnection } from "./connection";
-import { TreasuryAccount as TreasuryAcc } from "../../accounting/entities/tresury_account";
+import { TreasuryAccount } from "../../accounting/entities/tresury_account";
 import { mixin } from "../../lib/mixin";
 
-export interface TreasuryAccount extends TreasuryAcc { }
+export interface PgTreasuryAccount extends TreasuryAccount { }
 
-export class TreasuryAccount extends TreasuryAcc {
+export class PgTreasuryAccount extends TreasuryAccount {
   private conn: Connection
   public ID = "c89b484b-f1be-4e74-919b-56db532b6ad1"
 
