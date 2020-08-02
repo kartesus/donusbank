@@ -2,18 +2,12 @@ import { DepositHandler } from "./deposit_handler";
 import { AccountLedger } from "../entities/account_ledger";
 import { TreasuryAccount } from "../entities/tresury_account";
 import { Transaction } from "../entities/transaction";
-import { PersistentLedger } from "../traits/persistent_ledger";
 import { PersistentTransaction } from "../traits/persistent_transaction";
-import { Entry } from "../entities/entry";
+import { BusinessError } from "../../lib/errors";
 
-class TestSourceAccount extends TreasuryAccount implements PersistentLedger {
-  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
-  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
-}
+class TestSourceAccount extends TreasuryAccount { }
 
-class TestDestinationAccount extends AccountLedger implements PersistentLedger {
-  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
-  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
+class TestDestinationAccount extends AccountLedger {
   async verify(): Promise<void> { }
 }
 
@@ -43,8 +37,7 @@ class TestDepositHandler extends DepositHandler {
 test("Transaction is setup correctly", async () => {
   let handler = new TestDepositHandler()
   let result = await handler.handle("111.111.111-11", 500)
-  expect(result.ok).toBeTruthy()
-  expect(result.data).toMatchObject({
+  expect(result).toMatchObject({
     amount: 502,
     source: handler._source,
     destination: handler._destination
@@ -81,11 +74,9 @@ test("Transaction commits", async () => {
   expect(handler._transaction.commit).toHaveBeenCalled()
 })
 
-test("Transactino rolls back when something goes wrong", async () => {
+test("Transaction rolls back when something goes wrong", async () => {
   let handler = new TestDepositHandler()
   handler._transaction.commit = async () => { throw new Error() }
   jest.spyOn(handler._transaction, "rollback")
-  let result = await handler.handle("111.111.111-11", 500)
-  expect(result.ok).toBeFalsy()
-  expect(result.data).toBeInstanceOf(Error)
+  expect(handler.handle("111.111.111-11", 500)).rejects.toBeInstanceOf(BusinessError)
 })

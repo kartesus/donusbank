@@ -4,7 +4,7 @@ import { BonusCalculator } from "../traits/bonus_calculator";
 import { VerifiableAccount } from "../traits/verifiable_account";
 import { Transaction } from "../entities/transaction";
 import { PersistentTransaction } from "../traits/persistent_transaction";
-import { Result, wrapped } from "../../lib/result";
+import { BusinessError } from "../../lib/errors";
 
 interface Source extends SourceAccount, BonusCalculator { }
 interface Destination extends DestinationAccount, VerifiableAccount { }
@@ -15,7 +15,7 @@ export abstract class DepositHandler {
   abstract source(): Source
   abstract destination(fiscalNumber: string): Destination
 
-  async handle(fiscalNumber: string, amount: number): Promise<Result<DepositTransaction>> {
+  async handle(fiscalNumber: string, amount: number): Promise<DepositTransaction> {
     let source = this.source()
     let destination = this.destination(fiscalNumber)
     let bonus = source.calculateBonusFor(amount)
@@ -35,9 +35,9 @@ export abstract class DepositHandler {
       destination.deposit(bonus)
 
       await transaction.commit()
-      return wrapped(transaction)
+      return transaction
     } catch (err) {
-      return wrapped(err)
+      throw new BusinessError(err.message)
     }
   }
 }

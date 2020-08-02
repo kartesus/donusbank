@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { InternalError } from "../../lib/errors";
 
 export interface TransactionalConnection {
   commit(): Promise<void>
@@ -42,7 +43,7 @@ export class Connection {
       await client.query("BEGIN")
       await fn({ commit, rollback, query, execute })
     } catch (err) {
-      throw err
+      throw new InternalError(err.message)
     } finally {
       client.release()
     }

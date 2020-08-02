@@ -4,6 +4,7 @@ import { Connection } from "./connection";
 import { Transaction as AccountingTransaction } from "../../accounting/entities/transaction";
 import { PersistentTransaction } from "../../accounting/traits/persistent_transaction";
 import { PgCheckingAccount } from "./pg_checking_account";
+import { BusinessError } from "../../lib/errors";
 
 export interface PgTransaction extends AccountingTransaction { }
 
@@ -21,8 +22,8 @@ export class PgTransaction extends AccountingTransaction implements PersistentTr
   async commit() {
     await this.conn.run(async (conn) => {
       try {
-        if (this.source === null) throw new Error("No source account in transaction")
-        if (this.destination === null) throw new Error("No destination account in transaction")
+        if (this.source === null) throw new BusinessError("No source account in transaction")
+        if (this.destination === null) throw new BusinessError("No destination account in transaction")
 
         await conn.execute(
           `INSERT INTO transactions (id, source, destination, amount) 

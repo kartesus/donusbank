@@ -1,21 +1,15 @@
 import { TransferHandler } from "./transfer_handler";
 import { AccountLedger } from "../entities/account_ledger";
 import { Transaction } from "../entities/transaction";
-import { PersistentLedger } from "../traits/persistent_ledger";
 import { PersistentTransaction } from "../traits/persistent_transaction";
 import { Entry } from "../entities/entry";
+import { BusinessError } from "../../lib/errors";
 
-class TestSourceAccount extends AccountLedger implements PersistentLedger {
-  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
-  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
-  async commit(): Promise<void> { }
+class TestSourceAccount extends AccountLedger {
   async verify(): Promise<void> { }
 }
 
-class TestDestinationAccount extends AccountLedger implements PersistentLedger {
-  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
-  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
-  async commit(): Promise<void> { }
+class TestDestinationAccount extends AccountLedger {
   async verify(): Promise<void> { }
 }
 
@@ -45,8 +39,7 @@ class TestTransferHandler extends TransferHandler {
 test("Transaction is setup correctly", async () => {
   let handler = new TestTransferHandler()
   let result = await handler.handle("111.111.111-11", "222.222.222-22", 500)
-  expect(result.ok).toBeTruthy()
-  expect(result.data).toMatchObject({
+  expect(result).toMatchObject({
     amount: 500,
     source: handler._source,
     destination: handler._destination
@@ -85,7 +78,5 @@ test("Transactino rolls back when something goes wrong", async () => {
   let handler = new TestTransferHandler()
   handler._transaction.commit = async () => { throw new Error() }
   jest.spyOn(handler._transaction, "rollback")
-  let result = await handler.handle("111.111.111-11", "222.222.222-22", 500)
-  expect(result.ok).toBeFalsy()
-  expect(result.data).toBeInstanceOf(Error)
+  expect(handler.handle("111.111.111-11", "222.222.222-22", 500)).rejects.toBeInstanceOf(BusinessError)
 })

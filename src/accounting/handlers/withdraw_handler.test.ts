@@ -2,24 +2,15 @@ import { WithdrawHandler } from "./withdraw_handler";
 import { AccountLedger } from "../entities/account_ledger";
 import { TreasuryAccount } from "../entities/tresury_account";
 import { Transaction } from "../entities/transaction";
-import { PersistentLedger } from "../traits/persistent_ledger";
 import { PersistentTransaction } from "../traits/persistent_transaction";
 import { Entry } from "../entities/entry";
+import { BusinessError } from "../../lib/errors";
 
-class TestSourceAccount extends AccountLedger implements PersistentLedger {
-  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
-  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
-  async commit(): Promise<void> { }
-  async rollback(): Promise<void> { }
+class TestSourceAccount extends AccountLedger {
   async verify(): Promise<void> { }
 }
 
-class TestDestinationAccount extends TreasuryAccount implements PersistentLedger {
-  async authorizeWithdraw(transactionID: string): Promise<Entry[]> { return [] }
-  async authorizeDeposit(transactionID: string): Promise<Entry[]> { return [] }
-  async commit(): Promise<void> { }
-  async rollback(): Promise<void> { }
-}
+class TestDestinationAccount extends TreasuryAccount { }
 
 class TestTransaction extends Transaction implements PersistentTransaction {
   async commit(): Promise<void> { }
@@ -47,8 +38,7 @@ class TestWithDrawHandler extends WithdrawHandler {
 test("Transaction is setup correctly", async () => {
   let handler = new TestWithDrawHandler()
   let result = await handler.handle("111.111.111-11", 500)
-  expect(result.ok).toBeTruthy()
-  expect(result.data).toMatchObject({
+  expect(result).toMatchObject({
     amount: 505,
     source: handler._source,
     destination: handler._destination
@@ -89,7 +79,5 @@ test("Transactino rolls back when something goes wrong", async () => {
   let handler = new TestWithDrawHandler()
   handler._transaction.commit = async () => { throw new Error() }
   jest.spyOn(handler._transaction, "rollback")
-  let result = await handler.handle("111.111.111-11", 500)
-  expect(result.ok).toBeFalsy()
-  expect(result.data).toBeInstanceOf(Error)
+  expect(handler.handle("111.111.111-11", 500)).rejects.toBeInstanceOf(BusinessError)
 })

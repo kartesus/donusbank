@@ -1,4 +1,5 @@
 import CPF from "cpf";
+import { BusinessError } from "../../lib/errors";
 
 export class CheckingAccount {
   public ID = ""
@@ -11,10 +12,10 @@ export class CheckingAccount {
   }
 
   mustHaveValidName() {
-    if (this.name.length < 3) throw new Error("Name must have at least 3 letters")
+    if (this.name.length < 3) throw new BusinessError("Name must have at least 3 letters")
   }
 
   mustHaveValidFiscalNumber() {
-    if (!CPF.isValid(this.fiscalNumber)) throw new Error("Invalid fiscal number")
+    if (!CPF.isValid(this.fiscalNumber)) throw new BusinessError("Invalid fiscal number")
   }
 }

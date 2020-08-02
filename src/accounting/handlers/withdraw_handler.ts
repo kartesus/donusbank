@@ -1,10 +1,10 @@
-import { Result, wrapped } from "../../lib/result";
 import { Transaction } from "../entities/transaction";
 import { PersistentTransaction } from "../traits/persistent_transaction";
 import { VerifiableAccount } from "../traits/verifiable_account";
 import { FeeCalculator } from "../traits/fee_calculator";
 import { DestinationAccount } from "../traits/destination_account";
 import { SourceAccount } from "../traits/source_account";
+import { BusinessError } from "../../lib/errors";
 
 interface Source extends SourceAccount, VerifiableAccount { }
 interface Destination extends DestinationAccount, FeeCalculator { }
@@ -15,7 +15,7 @@ export abstract class WithdrawHandler {
   abstract destination(): Destination
   abstract transaction(): WithdrawTransaction
 
-  async handle(fiscalNumber: string, amount: number): Promise<Result<WithdrawTransaction>> {
+  async handle(fiscalNumber: string, amount: number): Promise<WithdrawTransaction> {
     let source = this.source(fiscalNumber)
     let destination = this.destination()
     let fee = destination.calculateFeeFor(amount)
@@ -35,9 +35,9 @@ export abstract class WithdrawHandler {
       destination.deposit(fee)
 
       await transaction.commit()
-      return wrapped(transaction)
+      return transaction
     } catch (err) {
-      return wrapped(err)
+      throw new BusinessError(err.message)
     }
   }
 }

@@ -1,5 +1,6 @@
-import { mixin } from "../../lib/mixin";
 import { v4 as uuid } from "uuid";
+
+import { mixin } from "../../lib/mixin";
 
 import { Connection } from "./connection";
 import { CheckingAccount } from "../../customer/entities/checking_account";
@@ -7,6 +8,7 @@ import { AccountCreator } from "../../customer/traits/account_creator";
 import { VerifiableAccount } from "../../accounting/traits/verifiable_account";
 import { AccountLedger } from "../../accounting/entities/account_ledger";
 import { TransactionalConnection } from "./connection";
+import { BusinessError } from "../../lib/errors";
 
 export interface PgCheckingAccount extends CheckingAccount, AccountLedger { }
 
@@ -32,18 +34,18 @@ export class PgCheckingAccount implements VerifiableAccount, AccountCreator {
        WHERE a.fiscalNumber = $1
        GROUP BY a.id`, [this.fiscalNumber])
 
-    if (r.length === 0) throw new Error("No account found")
+    if (r.length === 0) throw new BusinessError("No account found")
 
     let data = r[0]
+    console.log(data)
     this.ID = data.id
     this.name = data.name
-    this.version = data.version || 0
-    this.initialBalance = data.balance || 0
+    this.version = Number(data.version) || 0
+    this.initialBalance = Number(data.balance) || 0
   }
 
   async commitWithinTransaction(tx: TransactionalConnection, transactionID: string) {
-
-    if (this.balance < 0) throw new Error("Account balance cannot be below 0")
+    if (this.balance < 0) throw new BusinessError("Account balance cannot be below 0")
     for (let entry of this.entries) {
       await tx.execute(
         `INSERT INTO entries (id, transactionID, accountID, amount, version) VALUES ($1, $2, $3, $4, $5)`,
