@@ -32,15 +32,6 @@ export class PgTransaction extends AccountingTransaction implements PersistentTr
         await this.source.commitWithinTransaction(conn, this.ID)
         await this.destination.commitWithinTransaction(conn, this.ID)
 
-
-        // for (let entry of destinationEntries) {
-        //   await conn.execute(
-        //     `INSERT INTO entries (id, transactionID, accountID, amount, version)
-        //      VALUES ($1, $2, $3, $4, $5)`,
-        //     [entry.ID, entry.transactionID, entry.accountID, entry.amount, entry.version]
-        //   )
-        // }
-
         await conn.commit()
       } catch (err) {
         conn.rollback()
