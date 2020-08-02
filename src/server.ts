@@ -24,11 +24,12 @@ async function main() {
   let withdrawHandler = new LiveWithdrawHandler(conn)
   let transferHandler = new LiveTransferHandler(conn)
 
+  const PORT = Number(process.env.PORT || 3000)
   let app = express()
   app.use(pino_http())
   app.use("/accounts", accountsRoutes(openAccountHandler, depositHandler, withdrawHandler))
   app.use("/transfers", transfersRoutes(transferHandler))
-  app.listen(3000, () => logger.info("Running..."))
+  app.listen(PORT, () => logger.info(`Running on port ${PORT}...`))
 }
 
 main()
